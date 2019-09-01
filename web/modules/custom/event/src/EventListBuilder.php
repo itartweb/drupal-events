@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Url;
 
 /**
  * List builder for the Event entity.
@@ -57,6 +58,7 @@ class EventListBuilder extends EntityListBuilder {
     $header['title'] = $this->t('Title');
     $header['date'] = $this->t('Date');
     $header['category'] = $this->t('Category');
+    $header['submissions'] = $this->t('Submissions');
 
     return $header + parent::buildHeader();
   }
@@ -74,7 +76,13 @@ class EventListBuilder extends EntityListBuilder {
     ];
 
     $row['date'] = $this->getFieldValue($entity, 'date');
-    $row['category'] = $this->getFieldValue($entity, 'category');
+    $row['category'] = $this->getFieldValue($entity, 'category_id');
+
+    $row['submissions']['data'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Submissions'),
+      '#url' => Url::fromUri('base://submissions/' . $entity->id()),
+    ];
 
     return $row + parent::buildRow($entity);
   }
@@ -96,11 +104,19 @@ class EventListBuilder extends EntityListBuilder {
   private function getFieldValue($entity, $field_name) {
     $value = '';
 
-//      $field = $entity->{$field_name};
-//      $value = $field->getFieldDefinition()
-//        ->getFieldStorageDefinition()
-//        ->getOptionsProvider('value', $field->getEntity())->getPossibleOptions()[$field->value];
+    $item = $entity->get($field_name)->first();
 
+    if (!empty($item) && !empty($item->getValue())) {
+      $value = $item->getValue()['value'];
+    }
+
+    if ($field_name == 'category_id') {
+      if (!empty($item) && !empty($item->getValue())) {
+        $target_id = $item->getValue()['target_id'];
+        $country = \Drupal::service('entity.manager')->getStorage('taxonomy_term')->load($target_id);
+        $value = $country->label();
+      }
+    }
 
     return $value;
   }

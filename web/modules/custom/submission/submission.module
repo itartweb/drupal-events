@@ -1,282 +1,32 @@
 <?php
 
-use Drupal\Component\Utility\Html;
-use Drupal\Core\Render\Markup;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\taxonomy\Entity\Term;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Url;
+use Drupal\Component\Serialization\Json;
 
 /**
- * @file
- * Contains submission.module.
+ * Implements hook_entity_view_alter().
  */
-
-function submission_theme($existing, $type, $theme, $path)
-{
-  return [
-    'bf_mail' => [
-      'variables' => [
-        'mail_variables' => NULL,
-      ],
-    ],
-    'bf_mail_remove' => [
-      'variables' => [
-        'mail_variables' => NULL,
-      ],
-    ],
-  ];
-}
-
-
-/**
- * Implements hook_mail().
- */
-function submission_mail($key, &$message, $params)
-{
-  switch ($key) {
-    case 'rem':
-      $message['from'] = 'noreply@myelctraining.com';
-      $message['subject'] = t($params['subject']);
-      $message['body'][] = Html::escape($params['message']);
-      $message['params']['files'] = $params['attachments'];
-      break;
-  }
-}
-
-
-/**
- * Implements hook_cron().
- */
-function submission_cron() {
-  $timestamp = time();
-  $service = \Drupal::service('submission.custom_services');
-  $submissions = $service->getAllSubmissions();
-  if (count($submissions) > 0) {
-    foreach ($submissions as $item) {
-      $training = \Drupal::entityTypeManager()->getStorage('node')->load($item->training_id);
-      $reminder_time = isset($training->field_send_reminder_time->date) ? $training->field_send_reminder_time->date->getTimestamp() : FALSE;
-      if ($reminder_time && ($reminder_time <= $timestamp)) {
-        $service->buildMaileReminder($item->submission_id);
-        \Drupal::logger('Reminder mail')->notice('Reminder was send');
-      }
+function submission_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  if ($entity->bundle() == 'event') {
+    if ($build['#view_mode'] == 'full') {
+      $build['submission_link'] = [
+        '#type' => 'link',
+        '#title' => t('Subscribe'),
+        '#url' => Url::fromRoute('submission.add_form', ['event' => $entity->id()]),
+        '#options' => [
+          'attributes' => [
+            'class' => ['use-ajax'],
+            'data-dialog-type' => 'modal',
+            'data-dialog-options' => Json::encode([
+              'width' => 700,
+            ]),
+          ]
+        ],
+        '#attached' => ['library' => ['core/drupal.dialog.ajax']],
+        '#weight' => 100,
+      ];
     }
-  }
-}
-
-/**
- * Implements hook_page_attachments().
- */
-function submission_page_attachments(array &$attachments) {
-  $config = \Drupal::config('system.theme');
-  $theme = \Drupal::theme()->getActiveTheme()->getName();
-  if ($theme == $config->get('admin')) {
-    $attachments['#attached']['library'][] = 'submission/extra.admin';
-  }
-}
-
-
-/**
- * Implements hook_preprocess_views_view_field().
- */
-function submission_preprocess_views_view_field(&$vars){
-  if ($vars['field']->field == 'training_id' && $vars['view']->id() === 'submission_details') {
-    $nid = $vars['output']->__toString();
-    $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
-    $limit = $node->field_maximum_participants->getValue()[0]['value'];
-    $url = \Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $nid])->toString();
-    $service = \Drupal::service('submission.custom_services');
-    $number_participants = $service->getAmountMembersByTrainingId($nid);
-    $vars['output'] = Markup::create('<a href="'. $url .'">'. $node->field_public_title->value .'('. $nid .')</a>
-                      <p><b>Participants: </b>' . $number_participants . '<br/>
-                      <b>Limit: </b>' . $limit . '</p>');
-  }
-}
-
-
-/**
- * Implements hook_entity_delete().
- */
-function submission_submission_predelete(Drupal\Core\Entity\EntityInterface $entity) {
-  $service = \Drupal::service('submission.custom_services');
-  $service->buildMailDelete($entity->id());
-  \Drupal::messenger()->addStatus('Your submission has been deleted.');
-}
-
-/**
- * Implements hook_entity_preSave().
- */
-function submission_submission_presave(Drupal\Core\Entity\EntityInterface $entity) {
-  if (isset($entity->original)) {
-    $members_origin = $entity->original->getFields()['field_members']->referencedEntities();
-    $members_current = $entity->getFields()['field_members']->referencedEntities();
-    $diffs = submission_get_diff_members($members_origin, $members_current);
-    $request = \Drupal::request();
-    $session = $request->getSession();
-    $service = \Drupal::service('submission.custom_services');
-    if ($diffs) {
-      $service->buildMailUpdate($entity->id(), $diffs);
-      \Drupal::messenger()->addStatus('Your submission has been updated.');
-    }
-    elseif ($session->has('member_was_edit')) {
-      if ($session->get('member_was_edit')) {
-        $service->buildMailUpdate($entity->id(), $diffs);
-        \Drupal::messenger()->addStatus('Your submission has been updated.');
-        $session->set('member_was_edit', FALSE);
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_entity_preSave().
- */
-function submission_paragraph_presave(Drupal\Core\Entity\EntityInterface $entity) {
-  if (isset($entity->original) && $entity->get('type')->getValue()[0]['target_id'] === 'member') {
-    $members_origin = $entity->original;
-    $members_current = $entity;
-    $parent_id = $entity->get('parent_id')->getValue()[0]['value'];
-    $id = $entity->get('id')->getValue()[0]['value'];
-    $service = \Drupal::service('submission.custom_services');
-
-    $request = \Drupal::request();
-    $session = $request->getSession();
-    if (\Drupal::currentUser()->isAnonymous() && !$session->isStarted()) {
-      $session->start();
-      $session->migrate();
-    }
-    elseif (!$session->isStarted()) {
-      $session->start();
-    }
-
-    switch (TRUE) {
-      case $members_origin->get('field_email')->getValue()[0]['value'] !== $members_current->get('field_email')->getValue()[0]['value']:
-        $session->set('member_was_edit', TRUE);
-        $service->buildMailUpdate($parent_id, NULL, $id, $members_current);
-        \Drupal::messenger()->addStatus('Your submission has been updated.');
-        break;
-
-      case $members_origin->get('field_name')->getValue()[0]['value'] !== $members_current->get('field_name')->getValue()[0]['value']:
-        $session->set('member_was_edit', TRUE);
-        $service->buildMailUpdate($parent_id, NULL, $id, $members_current);
-        \Drupal::messenger()->addStatus('Your submission has been updated.');
-        break;
-
-      case $members_origin->get('field_lastname')->getValue()[0]['value'] !== $members_current->get('field_lastname')->getValue()[0]['value']:
-        $session->set('member_was_edit', TRUE);
-        $service->buildMailUpdate($parent_id, NULL, $id, $members_current);
-        \Drupal::messenger()->addStatus('Your submission has been updated.');
-        break;
-
-//      case $members_origin->get('field_geef_aan_of_we_lunch_moete')->getValue()[0]['value'] != $members_current->get('field_geef_aan_of_we_lunch_moete')->getValue()[0]['value']:
-//        $service->buildMailUpdate($parent_id, NULL, $id);
-//        \Drupal::messenger()->addStatus('Your submission has been updated.');
-//        break;
-    }
-
-    if (!empty($members_origin->get('field_geef_aan_of_we_lunch_moete')->getValue()) && ($members_origin->get('field_geef_aan_of_we_lunch_moete')->getValue()[0]['value'] != $members_current->get('field_geef_aan_of_we_lunch_moete')->getValue()[0]['value'])) {
-      $session->set('member_was_edit', TRUE);
-      $service->buildMailUpdate($parent_id, NULL, $id, $members_current);
-      \Drupal::messenger()->addStatus('Your submission has been updated.');
-    }
-  }
-}
-
-
-/**
- * get a diff members.
- */
-function submission_get_diff_members($members_origin, $members_current=NULL) {
-  $result = NULL;
-  $members_origin_data = [];
-  $members_current_data = [];
-
-  if (count($members_current) > 0 && count($members_origin) > 0) {
-    foreach ($members_current as $member_current) {
-      $members_current_data['ids'][] = $member_current->id();
-      $members_current_data['emails'][] = $member_current->field_email->value;
-    }
-    foreach ($members_origin as $member_origin) {
-      $members_origin_data['ids'][] = $member_origin->id();
-      $members_origin_data['emails'][] = $member_origin->field_email->value;
-    }
-
-    foreach ($members_current_data['emails'] as $k => $v) {
-      if (!in_array($v, $members_origin_data['emails'])) {
-        $result['added'][] = $members_current_data['ids'][$k];
-//      $result['added'][] = $v;
-      }
-    }
-
-    foreach ($members_origin_data['emails'] as $k => $v) {
-      if (!in_array($v, $members_current_data['emails'])) {
-        $result['removed'][] = $members_origin_data['ids'][$k];
-//      $result['removed'][] = $v;
-      }
-    }
-  }
-
-  return $result;
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function submission_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $parameters = \Drupal::service('current_route_match');
-  $rout_name = $parameters->getRouteName();
-  if (strpos($form_id, 'webform_submission_waitinglist_add_form') !== FALSE) {
-    $form['#validate'][] = 'submission_form_validate';
-  }
-  if (strpos($form_id, 'submission_edit_form') !== FALSE && $rout_name === 'submission.edit_form') {
-    $form['actions']['submit']['#submit'][] = 'submission_form_handler';
-  }
-}
-
-function submission_form_validate(&$form, FormStateInterface $form_state) {
-  $session = trainings_check_sesssion();
-  $country_id = $session['countrylang'];
-  $retailer_id = $session['retailer'];
-  $params = $param = \Drupal::request()->query->all();
-
-  if (!empty($country_id)) {
-    $term_country = Term::load($country_id);
-    $name_country = $term_country->getName();
-    $form_state->setValue('countrylang', $name_country);
-  }
-  if (!empty($retailer_id)) {
-    $term_retailer = Term::load($retailer_id);
-    $name_reteiler = $term_retailer->getName();
-    $form_state->setValue('retailer', $name_reteiler);
-  }
-  if (isset($params['nid'])) {
-    $node = \Drupal::entityTypeManager()->getStorage('node')->load($param['nid']);
-
-    $options = ['absolute' => TRUE];
-    $url = \Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $param['nid']], $options)->toString();
-
-//    $url = \Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $param['nid']])->toString();
-    $training = Markup::create('<a href="' . $url . '">' . $node->getTitle() .'</a>');
-    $form_state->setValue('training', $training);
-  }
-}
-
-
-/**
- * Implements hook_field_widget_WIDGET_TYPE_form_alter().
- */
-function submission_field_widget_entity_reference_paragraphs_form_alter(&$element, &$form_state, $context) {
-  $with_lunch = isset($form_state->getStorage()['with_lunch']) ? $form_state->getStorage()['with_lunch'] : NULL;
-  if ($with_lunch !== NULL) {
-    $element['subform']['field_geef_aan_of_we_lunch_moete']['#access'] = $with_lunch;
-    $element['subform']['field_comment']['#access'] = $with_lunch;
-    $element['subform']['field_about_member']['#access'] = $with_lunch;
-  }
-}
-
-
-function submission_form_handler(&$form, FormStateInterface $form_state) {
-  $training_id = $form_state->get('training')->id();
-  if ($training_id) {
-    $parameters = ['training' => $training_id];
-    $form_state->setRedirect('submission.confirm_form', $parameters);
   }
 }

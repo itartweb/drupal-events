@@ -1,113 +1,72 @@
-bf_content.manage:
-  path: '/admin/structure/bf-content'
-  defaults:
-    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
-    _title: 'BF Entities'
-  requirements:
-    _permission: 'access administration pages'
-
 submission.manage:
-  path: '/admin/structure/bf-content/submission'
+  path: '/admin/structure/event-content/submission'
   defaults:
     _form: '\Drupal\submission\Form\SubmissionSettingsForm'
-    _title: 'Submission Details'
+    _title: 'Submission'
   requirements:
     _permission: 'administer submission entity'
 
-bf_content.overview:
-  path: '/admin/bf-content'
-  defaults:
-    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
-    _title: 'BF content'
-  requirements:
-    _custom_access: '\Drupal\submission\Access\ContentAccess::access'
-
-submission.export.training_export:
-  path: '/admin/bf-content/training-export'
-  defaults:
-    _title: 'Training Export'
-    _form: '\Drupal\submission\Form\TrainingExportForm'
-  requirements:
-    _permission: 'administer submission entity'
-
-submission.export.submission_export:
-  path: '/admin/bf-content/submission-export'
-  defaults:
-    _title: 'Submission Export'
-    _form: '\Drupal\submission\Form\SubmissionExportForm'
-  requirements:
-    _permission: 'administer submission entity'
+#submission.export.submission_export:
+#  path: '/admin/event-content/submission-export'
+#  defaults:
+#    _title: 'Submission Export'
+#    _form: '\Drupal\submission\Form\SubmissionExportForm'
+#  requirements:
+#    _permission: 'administer submission entity'
 
 entity.submission.collection:
-  path: '/admin/bf-content/submission'
+  path: '/admin/event-content/submission'
   defaults:
-    _title: 'Submission Details'
+    _title: 'Submission'
     _entity_list: 'submission'
   requirements:
     _permission: 'view submission entity'
 
 submission.add_form:
-  path: '/training/{training}/submission/add'
+  path: '/event/{event}/submission/add'
   defaults:
     _controller: '\Drupal\submission\Controller\SubmissionController::addSubmission'
-    _title: 'Submission Details'
+    _title: 'Submission'
     operation: create
   options:
     parameters:
-      training:
-        type: 'entity:node'
+      event:
+        type: 'entity:event'
   requirements:
-    _custom_access: '\Drupal\submission\Controller\SubmissionController::checkAccess'
-    training: \d+
-
-submission.edit_form:
-  path: '/training/{training}/submission/{submission}/edit/{step}'
-  defaults:
-    _controller: '\Drupal\submission\Controller\SubmissionController::editSubmission'
-    _title: 'Submission Details'
-    operation: edit
-  options:
-    parameters:
-      training:
-        type: 'entity:node'
-      submission:
-        type: 'entity:submission'
-  requirements:
-    _custom_access: '\Drupal\submission\Controller\SubmissionController::checkAccess'
-    training: \d+
-    submission: \d+
-    step: \d+
-
-submission.delete_form:
-  path: '/training/{training}/submission/{submission}/delete'
-  defaults:
-    _controller: '\Drupal\submission\Controller\SubmissionController::deleteSubmission'
-    _title: 'Submission Details'
-    operation: delete
-  options:
-    parameters:
-      training:
-        type: 'entity:node'
-      submission:
-        type: 'entity:submission'
-  requirements:
-    _custom_access: '\Drupal\submission\Controller\SubmissionController::checkAccess'
-    training: \d+
-    submission: \d+
-    step: \d+
-
-submission.check_code_form:
-  path: '/submission/code'
-  defaults:
-    _title: 'Application form'
-    _form: '\Drupal\submission\Form\CheckCodeForm'
-    operation: code
-  requirements:
-    _custom_access: '\Drupal\submission\Form\CheckCodeForm::checkAccess'
-
-submission.confirm_form:
-  path: '/training/{training}/submission/confirm'
-  defaults:
-    _form: '\Drupal\submission\Form\ConfirmForm'
-  requirements:
-    _permission: 'access content'
+    _permission: 'add submission entity'
+    event: \d+
+#
+#submission.edit_form:
+#  path: '/submission/{submission}/edit'
+#  defaults:
+#    _controller: '\Drupal\submission\Controller\SubmissionController::editSubmission'
+#    _title: 'Submission'
+#    operation: edit
+#  options:
+#    parameters:
+#      submission:
+#        type: 'entity:submission'
+#  requirements:
+#    _permission: 'edit submission entity'
+#    submission: \d+
+#
+#submission.delete_form:
+#  path: '/submission/{submission}/delete'
+#  defaults:
+#    _controller: '\Drupal\submission\Controller\SubmissionController::deleteSubmission'
+#    _title: 'Submission'
+#    operation: delete
+#  options:
+#    parameters:
+#      submission:
+#        type: 'entity:submission'
+#  requirements:
+#    _permission: 'delete submission entity'
+#    submission: \d+
+#
+#submission.confirm_form:
+#  path: '/submission/confirm'
+#  defaults:
+#    _form: '\Drupal\submission\Form\SubmissionConfirmForm'
+#  requirements:
+#    _permission: 'access content'

@@ -7,9 +7,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Provides a form for deleting a submission entity.
+ * Provides a form for deleting a event Submission.
  *
- * @ingroup submission
+ * @ingroup event
  */
 class SubmissionDeleteForm extends ContentEntityConfirmFormBase {
 
@@ -23,10 +23,10 @@ class SubmissionDeleteForm extends ContentEntityConfirmFormBase {
   /**
    * {@inheritdoc}
    *
-   * If the delete command is canceled, return to the contact list.
+   * If the delete command is canceled, return to the list.
    */
   public function getCancelUrl() {
-    return new Url('view.submission_details.page_1');
+    return new Url('entity.submission.collection');
   }
 
   /**
@@ -44,18 +44,14 @@ class SubmissionDeleteForm extends ContentEntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $entity = $this->getEntity();
     $entity->delete();
+
     $this->logger('submission')->notice('deleted %title.',
       array(
         '%title' => $this->entity->label(),
       ));
 
     // Redirect to term list after delete.
-    if (\Drupal::currentUser()->isAnonymous()) {
-      $form_state->setRedirectUrl(Url::fromUri('internal:' . '/node/51'));
-    }
-    else {
-      $form_state->setRedirect('view.submission_details.page_1');
-    }
+    $form_state->setRedirect('entity.submission.collection');
   }
 
 }

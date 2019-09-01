@@ -12,8 +12,3 @@ entity.submission.delete_form:
   title: Delete
   route_name: entity.submission.delete_form
   base_route: entity.submission.canonical
-
-entity.submission.settings_tab:
-  route_name: submission.manage
-  title: Settings
-  base_route: submission.manage

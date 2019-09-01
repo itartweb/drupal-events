@@ -56,7 +56,7 @@ class ContentAccess implements RoutingAccessInterface, ContainerInjectionInterfa
   }
 
   /**
-   * Checks access for BF CRM Core overview.
+   * Checks access for Submission overview.
    *
    * @param \Symfony\Component\Routing\Route $route
    *   The route to check against.

@@ -1,22 +1,22 @@
 <?php
 
-namespace Drupal\event\Form;
+namespace Drupal\submission\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Form controller for the event entity edit forms.
+ * Form controller for the Submission entity edit forms.
  *
  * @ingroup event
  */
-class EventEditForm extends ContentEntityForm {
+class SubmissionEditForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'event_entity_edit_form';
+    return 'submission_entity_edit_form';
   }
 
   /**

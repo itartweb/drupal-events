@@ -7,8 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Class SubmissionSettingsForm.
- *  @package Drupal\submission\Form
- * @ingroup submission
+ * @package Drupal\event\Form
+ * @ingroup event
  */
 class SubmissionSettingsForm extends FormBase {
 
@@ -27,6 +27,7 @@ class SubmissionSettingsForm extends FormBase {
 
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['manage']['#markup'] = 'Settings form for Submission. Manage field settings here.';
+
     return $form;
   }
 

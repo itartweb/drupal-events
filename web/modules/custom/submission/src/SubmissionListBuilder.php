@@ -54,12 +54,10 @@ class SubmissionListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header = [];
 
-    $header['city'] = $this->t('City');
-
-    $header['field_type'] = [
-      'data' => $this->t('Type'),
-      'class' => [RESPONSIVE_PRIORITY_MEDIUM],
-    ];
+    $header['title'] = $this->t('Title');
+    $header['name'] = $this->t('Name');
+    $header['email'] = $this->t('Email');
+    $header['phone'] = $this->t('Phone');
 
     return $header + parent::buildHeader();
   }
@@ -70,13 +68,15 @@ class SubmissionListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     $row = [];
 
-    $row['id']['data'] = [
+    $row['title']['data'] = [
       '#type' => 'link',
       '#title' => $entity->label(),
       '#url' => $entity->toUrl(),
     ];
 
-    $row['field_type'] = $this->getFieldValue($entity, 'field_type');
+    $row['name'] = $this->getFieldValue($entity, 'firstname') . ' ' . $this->getFieldValue($entity, 'lastname');
+    $row['email'] = $this->getFieldValue($entity, 'email');
+    $row['phone'] = $this->getFieldValue($entity, 'phone');
 
     return $row + parent::buildRow($entity);
   }
@@ -98,11 +98,9 @@ class SubmissionListBuilder extends EntityListBuilder {
   private function getFieldValue($entity, $field_name) {
     $value = '';
 
-    if ($entity->hasField('field_type')) {
-      $field = $entity->{$field_name};
-      $value = $field->getFieldDefinition()
-        ->getFieldStorageDefinition()
-        ->getOptionsProvider('value', $field->getEntity())->getPossibleOptions()[$field->value];
+    $item = $entity->get($field_name)->first();
+    if (!empty($item) && !empty($item->getValue())) {
+      $value = $item->getValue()['value'];
     }
 
     return $value;

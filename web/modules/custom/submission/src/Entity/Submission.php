@@ -10,19 +10,18 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 
-
 /**
- * Provides the Submission Details entity.
+ * Provides the submission entity.
  *
  * @ContentEntityType(
  *   id = "submission",
- *   label = @Translation("Submission Details"),
- *   label_collection = @Translation("Submission Details"),
- *   label_singular = @Translation("Submission Details"),
- *   label_plural = @Translation("Submission Details"),
+ *   label = @Translation("Submission"),
+ *   label_collection = @Translation("Submission"),
+ *   label_singular = @Translation("Submission"),
+ *   label_plural = @Translation("Submission"),
  *   label_count = @PluralTranslation(
- *     singular = "@count Submission Details",
- *     plural = "@count Submission Details",
+ *     singular = "@count Submission",
+ *     plural = "@count Submission",
  *   ),
  *   base_table = "submission",
  *   handlers = {
@@ -31,8 +30,8 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *     },
  *     "form" = {
- *       "default" = "Drupal\submission\Form\SubmissionForm",
- *       "edit" = "Drupal\submission\Form\SubmissionForm",
+ *       "default" = "Drupal\submission\Form\SubmissionAddForm",
+ *       "edit" = "Drupal\submission\Form\SubmissionEditForm",
  *       "delete" = "Drupal\submission\Form\SubmissionDeleteForm",
  *     },
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
@@ -76,15 +75,43 @@ class Submission extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Created'))
       ->setDescription(new TranslatableMarkup('The time that the workspace was created.'));
 
-    $fields['code'] = BaseFieldDefinition::create('string')
-      ->setLabel(new TranslatableMarkup('Code'))
-      ->setSetting('max_length', 128)
+    $fields['firstname'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('First Name'))
+      ->setDescription(t('First name.'))
+      ->setDisplayConfigurable('form', TRUE)
       ->setRequired(TRUE)
-      ->setDescription(new TranslatableMarkup('The code.'));
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'string',
+        'weight' => -5,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'textfield',
+        'weight' => -5,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['lastname'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Last Name'))
+      ->setDescription(t('Last name.'))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setRequired(TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'string',
+        'weight' => -5,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'textfield',
+        'weight' => -5,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['email'] = BaseFieldDefinition::create('email')
       ->setLabel(t('E-Mail'))
-//      ->setDescription(t('Submission e-mail.'))
+      ->setDescription(t('Submission e-mail.'))
       ->setDisplayConfigurable('form', TRUE)
       ->setRequired(TRUE)
       ->setDisplayOptions('view', [
@@ -99,9 +126,9 @@ class Submission extends ContentEntityBase {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['store_department'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Winkel / afdeling'))
-//      ->setDescription(t('Store department.'))
+    $fields['phone'] = BaseFieldDefinition::create('telephone')
+      ->setLabel(t('Phone'))
+      ->setDescription(t('Submission phone.'))
       ->setDisplayConfigurable('form', TRUE)
       ->setRequired(TRUE)
       ->setDisplayOptions('view', [
@@ -110,86 +137,21 @@ class Submission extends ContentEntityBase {
         'weight' => -5,
       ])
       ->setDisplayOptions('form', [
-        'type' => 'textfield',
+        'type' => 'telephone_default',
         'weight' => -5,
       ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['store_address'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Winkeladres'))
-//      ->setDescription(t('Store address.'))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setRequired(TRUE)
-      ->setDisplayOptions('view', [
-        'label' => 'inline',
-        'type' => 'string',
-        'weight' => -5,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'textfield',
-        'weight' => -5,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['training_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Training'))
-      ->setDescription(t('The training ID.'))
-      ->setSetting('target_type', 'node')
+    $fields['event_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Event'))
+      ->setDescription(t('The event ID.'))
+      ->setSetting('target_type', 'event')
       ->setSetting('handler', 'default')
-      ->setSetting('handler_settings', ['target_bundles' => ['training' => 'training']])
+      //->setSetting('handler_settings', ['target_bundles' => ['event' => 'event']])
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
-        'type' => 'training',
-        'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'weight' => 5,
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['country_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Country'))
-      ->setDescription(t('The country ID.'))
-      ->setSetting('target_type', 'taxonomy_term')
-      ->setSetting('handler', 'default')
-      ->setSetting('handler_settings', ['target_bundles' => ['countries' => 'countries']])
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'countries',
-        'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'weight' => 5,
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['retailer_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Retailer'))
-      ->setDescription(t('The retailer ID.'))
-      ->setSetting('target_type', 'taxonomy_term')
-      ->setSetting('handler', 'default')
-      ->setSetting('handler_settings', ['target_bundles' => ['retailers' => 'retailers']])
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'retailers',
+        'type' => 'event',
         'weight' => 0,
       ))
       ->setDisplayOptions('form', array(
@@ -218,47 +180,8 @@ class Submission extends ContentEntityBase {
   /**
    * {@inheritdoc}
    */
-  public static function getSubmissionIdByCode($code) {
-    $ids = \Drupal::entityQuery('submission')
-      ->condition('code', $code)
-      ->execute();
-
-    return !empty($ids) ? current($ids) : NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function preSave(EntityStorageInterface $storage) {
-    $code = parent::getFields()['code']->__get('value');
-    if (empty($code) || $code === NULL) {
-      $service = \Drupal::service('submission.custom_services');
-      $code = $service->getUniqueCode(8);
-      parent::getFields()['code']->__set('value', $code);
-    }
 
-    $request = \Drupal::request();
-    $session = $request->getSession();
-    if (\Drupal::currentUser()->isAnonymous() && !$session->isStarted()) {
-      $session->start();
-      $session->migrate();
-    }
-    elseif (!$session->isStarted()) {
-      $session->start();
-    }
-    $session->set('unique_code', $code);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
-    $submission_id = parent::getFields()['submission_id']->__get('value');
-    $is_sent = parent::getFields()['field_email_after_creation']->__get('value');
-    if (empty($is_sent) || $is_sent != 1) {
-      $service = \Drupal::service('submission.custom_services');
-      $service->buildMail($submission_id);
-    }
   }
 
 }

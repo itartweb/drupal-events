@@ -1,5 +1,5 @@
 entity.submission.add:
-  title: 'Add Submission Details'
+  title: 'Add Submission'
   route_name: entity.submission.add_form
   weight: 15
   appears_on:

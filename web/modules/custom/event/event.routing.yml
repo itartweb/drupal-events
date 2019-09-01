@@ -67,9 +67,9 @@ event.delete_form:
     _entity_access: 'event.delete'
     event: \d+
 
-#event.confirm_form:
-#  path: '/event/{training}/submission/confirm'
-#  defaults:
-#    _form: '\Drupal\submission\Form\ConfirmForm'
-#  requirements:
-#    _permission: 'access content'
+event.confirm_form:
+  path: '/event/confirm'
+  defaults:
+    _form: '\Drupal\event\Form\EventConfirmForm'
+  requirements:
+    _permission: 'access content'

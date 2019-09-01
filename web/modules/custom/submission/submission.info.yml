@@ -1,5 +1,8 @@
 name: 'Submission'
 type: module
 description: 'Submission Details module'
-package: Akapivo
+package: Custom
 core: 8.x
+dependencies:
+  - drupal:event
+  - drupal:telephone

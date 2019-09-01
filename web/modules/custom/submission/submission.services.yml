@@ -1,4 +1,4 @@
 services:
-  submission.custom_services:
-    class: Drupal\submission\Services\CustomService
+  submission.submission_services:
+    class: Drupal\submission\Services\SubmissionService
     arguments: []
