@@ -10,8 +10,8 @@ submission.manage:
   route_name: submission.manage
   parent: event_content.manage
 
-#submission.export.submission_export:
-#  title: Submission export
-#  description: 'Submission export.'
-#  route_name: submission.export.submission_export
-#  parent: event_content.overview
+submission.export.submission_export:
+  title: Submission export
+  description: 'Submission export.'
+  route_name: submission.export.submission_export
+  parent: event_content.overview

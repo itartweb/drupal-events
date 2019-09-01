@@ -35,38 +35,11 @@ submission.add_form:
   requirements:
     _permission: 'add submission entity'
     event: \d+
-#
-#submission.edit_form:
-#  path: '/submission/{submission}/edit'
-#  defaults:
-#    _controller: '\Drupal\submission\Controller\SubmissionController::editSubmission'
-#    _title: 'Submission'
-#    operation: edit
-#  options:
-#    parameters:
-#      submission:
-#        type: 'entity:submission'
-#  requirements:
-#    _permission: 'edit submission entity'
-#    submission: \d+
-#
-#submission.delete_form:
-#  path: '/submission/{submission}/delete'
-#  defaults:
-#    _controller: '\Drupal\submission\Controller\SubmissionController::deleteSubmission'
-#    _title: 'Submission'
-#    operation: delete
-#  options:
-#    parameters:
-#      submission:
-#        type: 'entity:submission'
-#  requirements:
-#    _permission: 'delete submission entity'
-#    submission: \d+
-#
-#submission.confirm_form:
-#  path: '/submission/confirm'
-#  defaults:
-#    _form: '\Drupal\submission\Form\SubmissionConfirmForm'
-#  requirements:
-#    _permission: 'access content'
+
+submission.export.submission_export:
+  path: '/admin/event-content/submission-export'
+  defaults:
+    _title: 'Submission Export'
+    _form: '\Drupal\submission\Form\SubmissionExportForm'
+  requirements:
+    _permission: 'administer submission entity'
