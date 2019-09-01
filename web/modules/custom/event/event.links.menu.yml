@@ -1,0 +1,29 @@
+event_content.overview:
+  route_name: event_content.overview
+  parent: system.admin
+  description: 'Event Content.'
+  title: 'Event Content'
+
+entity.event.add_form:
+  title: 'Add Event'
+  description: 'Add Event.'
+  route_name: event.add_form
+  parent: event_content.overview
+
+entity.event.collection:
+  title: 'Events'
+  description: 'Manage Event Details.'
+  route_name: entity.event.collection
+  parent: event_content.overview
+
+event_content.manage:
+  title: 'Event Entities'
+  parent: system.admin_structure
+  description: 'Configure Event Entities.'
+  route_name: event_content.manage
+
+event.manage:
+  title: Event
+  description: 'Event.'
+  route_name: event.manage
+  parent: event_content.manage

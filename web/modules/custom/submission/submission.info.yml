@@ -1,0 +1,5 @@
+name: 'Submission'
+type: module
+description: 'Submission Details module'
+package: Akapivo
+core: 8.x

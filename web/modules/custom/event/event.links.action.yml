@@ -1,0 +1,6 @@
+entity.event.add:
+  title: 'Add Event'
+  route_name: entity.event.add_form
+  weight: 15
+  appears_on:
+    - entity.event.collection

@@ -1,0 +1,10 @@
+'view event entity':
+  title: 'View event details'
+'add event entity':
+  title: 'Add event details'
+'edit event entity':
+  title: 'Edit event details'
+'delete event entity':
+  title: 'Delete event details'
+'administer event entity':
+  title: 'Administer event details'

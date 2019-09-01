@@ -1,0 +1,7 @@
+name: 'Event'
+type: module
+description: 'Event module'
+package: Custom
+core: 8.x
+dependencies:
+  - drupal:datetime_range

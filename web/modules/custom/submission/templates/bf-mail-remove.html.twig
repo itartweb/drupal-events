@@ -1,0 +1,30 @@
+{% if mail_variables['country_id'] == '1' or mail_variables['country_id'] == '2' %}
+  {% if mail_variables['is_member'] %}
+    <p>Beste {{ mail_variables['first_name'] }} {{ mail_variables['last_name'] }} </p>
+  {% else %}
+    <p>Beste {{ mail_variables['store_department'] }} </p>
+  {% endif %}
+  <br/>
+  <p>Uw inschrijving werd hierbij geannuleerd.</p>
+  <p>Wij zien u graag een andere keer!</p>
+  <br/>
+  <p>Het Education-team van Estée Lauder Companies</p>
+{% elseif mail_variables['country_id'] == '3' or mail_variables['country_id'] == '4' %}
+
+  {% if mail_variables['is_member'] %}
+    <p>Cher/Chère {{ mail_variables['first_name'] }} {{ mail_variables['last_name'] }} </p>
+  {% else %}
+      <p>Cher/Chère {{ mail_variables['store_department'] }} </p>
+  {% endif %}
+
+  <br/>
+  <p>Votre inscription a été annulée.</p>
+  <p>Nous nous réjouissons de vous accueillir à une autre formation!</p>
+  <br/>
+  <p>L’équipe de formation Estée Lauder Companies</p>
+{% endif %}
+
+
+
+
+

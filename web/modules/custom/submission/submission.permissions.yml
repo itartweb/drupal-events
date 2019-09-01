@@ -1,0 +1,10 @@
+'view submission entity':
+  title: 'View submission details'
+'add submission entity':
+  title: 'Add submission details'
+'edit submission entity':
+  title: 'Edit submission details'
+'delete submission entity':
+  title: 'Delete submission details'
+'administer submission entity':
+  title: 'Administer submission details'

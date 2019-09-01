@@ -1,0 +1,6 @@
+entity.submission.add:
+  title: 'Add Submission Details'
+  route_name: entity.submission.add_form
+  weight: 15
+  appears_on:
+    - entity.submission.collection

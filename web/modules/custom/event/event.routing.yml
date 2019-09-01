@@ -1,0 +1,75 @@
+event_content.manage:
+  path: '/admin/structure/event-content'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Event Entities'
+  requirements:
+    _permission: 'access administration pages'
+
+event.manage:
+  path: '/admin/structure/event-content/event'
+  defaults:
+    _form: '\Drupal\event\Form\EventSettingsForm'
+    _title: 'Event Details'
+  requirements:
+    _permission: 'administer event entity'
+
+event_content.overview:
+  path: '/admin/event-content'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Event content'
+  requirements:
+    _permission: 'administer event entity'
+
+entity.event.collection:
+  path: '/admin/event-content/event'
+  defaults:
+    _title: 'Event Details'
+    _entity_list: 'event'
+  requirements:
+    _permission: 'view event entity'
+
+event.add_form:
+  path: '/event/add'
+  defaults:
+    _controller: '\Drupal\event\Controller\EventController::addEvent'
+    _title: 'Event Details'
+    operation: create
+  requirements:
+    _entity_access: 'event.create'
+
+event.edit_form:
+  path: '/event/{event}/edit'
+  defaults:
+    _controller: '\Drupal\event\Controller\EventController::editEvent'
+    _title: 'Event Details'
+    operation: edit
+  options:
+    parameters:
+      event:
+        type: 'entity:event'
+  requirements:
+    _entity_access: 'event.edit'
+    event: \d+
+
+event.delete_form:
+  path: '/event/{event}/delete'
+  defaults:
+    _controller: '\Drupal\event\Controller\EventController::deleteEvent'
+    _title: 'Event Details'
+    operation: delete
+  options:
+    parameters:
+      event:
+        type: 'entity:event'
+  requirements:
+    _entity_access: 'event.delete'
+    event: \d+
+
+#event.confirm_form:
+#  path: '/event/{training}/submission/confirm'
+#  defaults:
+#    _form: '\Drupal\submission\Form\ConfirmForm'
+#  requirements:
+#    _permission: 'access content'

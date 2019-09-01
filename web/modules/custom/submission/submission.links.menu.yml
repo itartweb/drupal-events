@@ -1,0 +1,35 @@
+bf_content.overview:
+  route_name: bf_content.overview
+  parent: system.admin
+  description: 'BF Content.'
+  title: 'BF Content'
+
+#entity.submission.collection:
+#  title: 'Submission Details'
+#  description: 'Manage Submission Details.'
+#  route_name: entity.submission.collection
+#  parent: bf_content.overview
+
+bf_content.manage:
+  title: 'BF Entities'
+  parent: system.admin_structure
+  description: 'Configure BF Entities.'
+  route_name: bf_content.manage
+
+submission.manage:
+  title: Submission
+  description: 'Submission.'
+  route_name: submission.manage
+  parent: bf_content.manage
+
+submission.export.training_export:
+  title: Training export
+  description: 'Training export.'
+  route_name: submission.export.training_export
+  parent: bf_content.overview
+
+submission.export.submission_export:
+  title: Submission export
+  description: 'Submission export.'
+  route_name: submission.export.submission_export
+  parent: bf_content.overview

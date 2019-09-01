@@ -1,0 +1,19 @@
+entity.submission.canonical:
+  title: View
+  route_name: entity.submission.canonical
+  base_route: entity.submission.canonical
+
+entity.submission.edit_form:
+  title: Edit
+  route_name: entity.submission.edit_form
+  base_route: entity.submission.canonical
+
+entity.submission.delete_form:
+  title: Delete
+  route_name: entity.submission.delete_form
+  base_route: entity.submission.canonical
+
+entity.submission.settings_tab:
+  route_name: submission.manage
+  title: Settings
+  base_route: submission.manage

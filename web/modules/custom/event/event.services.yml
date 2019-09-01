@@ -1,0 +1,4 @@
+services:
+  event.event_service:
+    class: Drupal\event\Services\EventService
+    arguments: []

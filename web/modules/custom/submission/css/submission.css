@@ -1,0 +1,12 @@
+.view-id-submission_details .view-content caption{
+  caption-side: bottom;
+}
+.view-id-submission_details .view-content .views-field-field-members {
+  width: 25%;
+}
+.view-id-submission_details .view-content .views-field-email {
+  width: 15%;
+}
+.view-id-submission_details .view-content .views-field-store-department {
+  width: 15%;
+}
