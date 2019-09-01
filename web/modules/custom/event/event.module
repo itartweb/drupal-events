@@ -1,0 +1,19 @@
+<?php
+
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function event_views_pre_render(ViewExecutable $view) {
+  if ($view->id() == 'events') {
+    $parameters = \Drupal::routeMatch()->getParameters();
+    if ($tid = $parameters->get('arg_0')) {
+      $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+      $category = $storage->load($tid);
+      if ($category) {
+        $view->setTitle(t('@category events', ['@category' => $category->label()]));
+      }
+    }
+  }
+}
