@@ -196,4 +196,24 @@ class Event extends ContentEntityBase {
     return $fields;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    parent::postDelete($storage, $entities);
+
+    $moduleHandler = \Drupal::service('module_handler');
+    if ($moduleHandler->moduleExists('submission')){
+      foreach ($entities as $entity) {
+        $entityQuery = \Drupal::entityQuery('submission');
+        $entityQuery->condition('event_id', $entity->id());
+        $entityIds = $entityQuery->execute();
+
+        $storage = \Drupal::entityTypeManager()->getStorage('submission');
+        $submissionObjects = $storage->loadMultiple($entityIds);
+        $storage->delete($submissionObjects);
+      }
+    }
+  }
+
 }

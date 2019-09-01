@@ -148,7 +148,7 @@ class Submission extends ContentEntityBase {
       ->setDescription(t('The event ID.'))
       ->setSetting('target_type', 'event')
       ->setSetting('handler', 'default')
-      //->setSetting('handler_settings', ['target_bundles' => ['event' => 'event']])
+      ->setRequired(TRUE)
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'event',

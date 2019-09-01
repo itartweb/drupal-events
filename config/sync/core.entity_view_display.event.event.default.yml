@@ -1,0 +1,53 @@
+uuid: 21381882-2230-4203-a27c-34f35b606234
+langcode: en
+status: true
+dependencies:
+  module:
+    - datetime_range
+    - event
+id: event.event.default
+targetEntityType: event
+bundle: event
+mode: default
+content:
+  category_id:
+    label: inline
+    type: entity_reference_label
+    weight: 0
+    region: content
+    settings:
+      link: false
+    third_party_settings: {  }
+  date:
+    label: above
+    type: daterange_default
+    weight: -4
+    region: content
+    settings:
+      separator: '-'
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+  description:
+    type: basic_string
+    weight: 0
+    label: above
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  email:
+    label: inline
+    type: basic_string
+    weight: -5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  title:
+    label: inline
+    type: string
+    weight: -5
+    region: content
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden: {  }

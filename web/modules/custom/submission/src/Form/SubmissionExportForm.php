@@ -57,8 +57,8 @@ class SubmissionExportForm extends FormBase {
     $entityQuery = \Drupal::entityQuery('event');
     $entityIds = $entityQuery->execute();
 
-    $controller = \Drupal::entityTypeManager()->getStorage('event');
-    $eventsObjects = $controller->loadMultiple($entityIds);
+    $storage = \Drupal::entityTypeManager()->getStorage('event');
+    $eventsObjects = $storage->loadMultiple($entityIds);
 
     foreach ($eventsObjects as $event) {
       $events[$event->id()] = $event->label();
@@ -70,7 +70,7 @@ class SubmissionExportForm extends FormBase {
 	/**
    	* {@inheritdoc}
    	*/
-	public function buildForm(array $form,FormStateInterface $form_state){
+	public function buildForm(array $form,FormStateInterface $form_state) {
 		$form['event_id'] = [
 			'#title'=> $this->t('Events'),
 			'#type'=> 'select',
