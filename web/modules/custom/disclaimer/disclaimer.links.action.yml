@@ -1,0 +1,7 @@
+entity.disclaimer.add:
+  title: 'Add disclaimer'
+  route_name: entity.disclaimer.add
+  weight: 15
+  appears_on:
+    - entity.disclaimer.collection
+    - entity.disclaimer.canonical

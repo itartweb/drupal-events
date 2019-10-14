@@ -1,0 +1,11 @@
+entity.disclaimer.add:
+  title: 'Add Disclaimer'
+  description: 'Add Disclaimer.'
+  route_name: entity.disclaimer.add
+  parent: entity.disclaimer.collection
+
+entity.disclaimer.collection:
+  title: 'Disclaimers'
+  description: 'Manage Disclaimer.'
+  route_name: entity.disclaimer.collection
+  parent: system.admin_content

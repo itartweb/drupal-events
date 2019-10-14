@@ -1,0 +1,9 @@
+disclaimer:
+  js:
+    js/disclaimer.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery
+    - core/jquery.cookie
+    - core/jquery.ui.dialog

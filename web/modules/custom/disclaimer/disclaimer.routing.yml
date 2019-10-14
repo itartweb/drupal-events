@@ -1,0 +1,31 @@
+entity.disclaimer.collection:
+  path: '/admin/content/disclaimer'
+  defaults:
+    _title: 'Disclaimers'
+    _entity_list: 'disclaimer'
+  requirements:
+    _permission: 'view disclaimer'
+
+entity.disclaimer.add:
+  path: '/disclaimer/add'
+  defaults:
+    _entity_form: disclaimer.add
+    _title: 'Add disclaimer'
+  requirements:
+    _entity_create_access: 'disclaimer'
+
+entity.disclaimer.edit_form:
+  path: '/disclaimer/{disclaimer}/edit'
+  defaults:
+    _entity_form: disclaimer.edit
+    _title: 'Edit disclaimer'
+  requirements:
+    _entity_access: 'disclaimer.edit'
+
+entity.disclaimer.delete_form:
+  path: '/disclaimer/{disclaimer}/delete'
+  defaults:
+    _entity_form: disclaimer.delete
+    _title: 'Delete disclaimer'
+  requirements:
+    _entity_access: 'disclaimer.delete'

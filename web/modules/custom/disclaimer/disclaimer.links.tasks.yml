@@ -1,0 +1,20 @@
+entity.disclaimer.canonical:
+  title: View
+  route_name: entity.disclaimer.canonical
+  base_route: entity.disclaimer.canonical
+
+entity.disclaimer.view:
+  route_name: entity.disclaimer.canonical
+  base_route: entity.disclaimer.canonical
+  title: View
+
+entity.disclaimer.page_edit:
+  route_name: entity.disclaimer.edit_form
+  base_route: entity.dictionary_term.canonical
+  title: Edit
+
+entity.disclaimer.delete_confirm:
+  route_name: entity.disclaimer.delete_form
+  base_route: entity.disclaimer.canonical
+  title: Delete
+  weight: 10

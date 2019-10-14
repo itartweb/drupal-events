@@ -1,0 +1,4 @@
+services:
+  disclaimer.service:
+    class: Drupal\disclaimer\DisclaimerService
+    arguments: []
